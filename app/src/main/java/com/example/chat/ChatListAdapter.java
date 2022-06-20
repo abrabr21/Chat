@@ -11,9 +11,9 @@ import java.util.ArrayList;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListHolder>{
     ArrayList<String> chats = new ArrayList<>();
     Context context;
-    public ChatListAdapter(Context context,ArrayList<String> chats){
+    public ChatListAdapter(Context context, ArrayList<String> chats){
         this.chats = chats;
-        this.context=context;
+        this.context = context;
     }
     @Override
     public ChatListHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -10,14 +10,13 @@ import java.util.ArrayList;
 
 public class Chat {
     public static void showChatList(Context context, LinearLayout linearLayout){
-        linearLayout.removeAllViews();
-        RecyclerView recyclerView= new RecyclerView(context);
+        linearLayout.removeAllViews(); // Важно!!!
+        RecyclerView recyclerView = new RecyclerView(context);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        ArrayList<String> name =new ArrayList<>();
-        name.add("Petya");name.add("Vasya"); name.add("Kolya");
-        ChatListAdapter chatListAdapter= new ChatListAdapter(context, name);
+        ArrayList<String> names = new ArrayList<>();
+        names.add("Петя"); names.add("Вася"); names.add("Коля");
+        ChatListAdapter chatListAdapter = new ChatListAdapter(context, names);
         recyclerView.setAdapter(chatListAdapter);
         linearLayout.addView(recyclerView);
-
     }
 }

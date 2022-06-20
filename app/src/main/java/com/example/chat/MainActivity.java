@@ -1,53 +1,55 @@
 package com.example.chat;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.net.Socket;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import com.example.chat.database.DBMethods;
 
 public class MainActivity extends AppCompatActivity {
-   public static boolean isAuth= false;
+    LinearLayout mainLinerLayout;
+    public static boolean isAuth = false;
+    FrameLayout mainFrame;
+    static FragmentManager fm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LinearLayout mainLinearLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainLinearLayout=findViewById(R.id.mainLinerLayout);
-        if(savedInstanceState !=null)
-            isAuth=savedInstanceState.getBoolean("isAuth");
+        mainFrame=findViewById(R.id.mainFrame);
+         fm = getSupportFragmentManager();
+        FragmentTransaction transaction=fm.beginTransaction();
+        transaction.add(R.id.mainFrame, new StartFragment() ).commit();
 
 
-        if(!isAuth){
-            Auth.showAuth(MainActivity.this, mainLinearLayout);
-
-        }else{
-            Chat.showChatList(MainActivity.this, mainLinearLayout);
+        if(savedInstanceState != null) {
+            isAuth = savedInstanceState.getBoolean("isAuth");
+            Chat.showChatList(MainActivity.this, mainLinerLayout);
         }
+        else{
+            DBMethods dbMethods = new DBMethods(MainActivity.this);
+            String token = dbMethods.getToken();
+            if(token != null && !token.equals("0")){
+                Auth.userAuth(token, MainActivity.this, mainLinerLayout);
+                isAuth = true;
+            }else{
+                Auth.showAuth(MainActivity.this, mainLinerLayout);
+            }
+        }
+        mainLinerLayout = findViewById(R.id.mainLinerLayout);
     }
+
     @Override
-    public void onSaveInstanceState (Bundle bundle){
+    public void onSaveInstanceState(Bundle bundle){
         super.onSaveInstanceState(bundle);
-        bundle.putBoolean("isAuth",isAuth);
+        bundle.putBoolean("isAuth", isAuth);
+    }
+    public static void changeFragment(Fragment fragment){
+        FragmentTransaction transaction= fm.beginTransaction();
+        transaction.replace(R.id.mainFrame, fragment).commit();
     }
 }

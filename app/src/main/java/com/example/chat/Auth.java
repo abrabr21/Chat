@@ -6,33 +6,39 @@ import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chat.database.DBMethods;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.Socket;
+
 public class Auth {
     public static void showAuth(Context context, LinearLayout linearLayout){
-        LinearLayout.LayoutParams lp= new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMargins(0,20,0,20);
-        TextView loginTextview= new TextView(context);
-        EditText loginEditText= new EditText(context);
-        EditText passEditText= new EditText(context);
-        Button loginBtn= new Button(context);
-        Button registerBtn=new Button(context);
-        loginTextview.setText("Authorization");
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 20, 0, 20);
+        TextView loginTextview = new TextView(context);
+        EditText loginEditText = new EditText(context);
+        EditText passEditText = new EditText(context);
+        Button loginBtn = new Button(context);
+        Button registerBtn = new Button(context);
+        loginTextview.setText("Авторизация");
         loginTextview.setGravity(Gravity.CENTER);
-        loginTextview.setTextSize(TypedValue.COMPLEX_UNIT_SP,24 );
-        loginEditText.setHint("Log IN");
+        loginTextview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+        loginEditText.setHint("Телефон");
         loginEditText.setLayoutParams(lp);
         passEditText.setLayoutParams(lp);
-        passEditText.setHint("Password");
-        registerBtn.setText("Registration");
-        passEditText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD );
+        passEditText.setHint("Пароль");
+        passEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         loginBtn.setLayoutParams(lp);
-        loginBtn.setText("Come in");
+        loginBtn.setText("Войти");
+        registerBtn.setText("Создать аккаунт");
         linearLayout.addView(loginTextview);
         linearLayout.addView(loginEditText);
         linearLayout.addView(passEditText);
@@ -41,28 +47,67 @@ public class Auth {
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-                if(userAuth(loginEditText.getText().toString(), passEditText.getText().toString())) {
-
-                    Intent intent = new Intent(context, RegActivity.class);
-                    context.startActivity(intent);
-                }else{
-                    Toast.makeText(context, "Invalid Log or Pass",Toast.LENGTH_SHORT).show();
-                }
+            public void onClick(View v) {
+                Intent intent = new Intent(context, RegActivity.class);
+                context.startActivity(intent);
             }
         });
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Chat.showChatList(context, linearLayout);
+            public void onClick(View v) {
+                String phone = loginEditText.getText().toString();
+                String pass = passEditText.getText().toString();
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Socket socket = new Socket("192.168.1.6", 9178);
+                            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                            out.writeUTF("auth//"+phone+"//"+pass);
+                            String response = (String) ois.readObject();
+                            if(response.equals("error")){
+                                Toast.makeText(context, "Неправильный логин или пароль", Toast.LENGTH_SHORT).show();
+                            }else{
+                                String[] resArray = response.split("//");
+                                String name = resArray[0];
+                                String uuid = resArray[1];
+                                String token = resArray[2];
+                                DBMethods dbMethods = new DBMethods(context);
+                                dbMethods.updateUser(phone, name, uuid, token);
+                                MainActivity.isAuth = true;
+                                Chat.showChatList(context, linearLayout);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                thread.start();
             }
         });
     }
-    private static boolean userAuth(String login, String pass){
 
-        boolean isAuth= false;
-        if(login.equals("admin")&&pass.equals("12345")) isAuth=true;
-        return isAuth;
+    // Авторизация пользователя на сервере
+    public static void userAuth(String token, Context context, LinearLayout linearLayout){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Socket socket = new Socket("192.168.1.6", 9178);
+                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                    out.writeUTF("token//"+token);
+                    String response = (String) ois.readObject();
+                    if(response.equals("success")){
+                        Chat.showChatList(context, linearLayout);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        thread.start();
     }
 }

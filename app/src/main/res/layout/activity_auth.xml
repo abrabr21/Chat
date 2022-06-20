@@ -3,39 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".AuthActivity">
+
 
     <EditText
         android:id="@+id/editTextPhoneAuth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:ems="10"
         android:inputType="phone"
-        android:text="Name" />
+        android:hint="Phone" />
 
     <EditText
-        android:id="@+id/editTextTextPasswordAuth"
+        android:id="@+id/editTextPasswordAuth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:ems="10"
-        android:hint="password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:hint="Password"/>
 
     <Button
         android:id="@+id/submitAuth"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Вoйти" />
+        android:text="Войти" />
 
     <Button
         android:id="@+id/startRegActivityBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="Зарегистрироваться" />
 </LinearLayout>

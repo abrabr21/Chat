@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ChatListHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class ChatListHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     TextView chatTextView;
     String userName;
     Context context;
     public ChatListHolder(LayoutInflater inflater, ViewGroup viewGroup) {
         super(inflater.inflate(R.layout.single_chat, viewGroup, false));
-        chatTextView = itemView.findViewById(R.id.chatTextView);
+        chatTextView = itemView.findViewById(R.id.singleMessageTextView);
         chatTextView.setOnClickListener(this);
     }
     public void bind(String userName){

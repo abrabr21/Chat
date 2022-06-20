@@ -8,20 +8,12 @@
     tools:context=".RegActivity">
 
     <EditText
-        android:id="@+id/editTextNAmeReg"
+        android:id="@+id/editTextNameReg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
-
-    <EditText
-        android:id="@+id/editTextTextPasswordReg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:hint="password"/>
+        android:hint="Name" />
 
     <EditText
         android:id="@+id/editTextPhoneReg"
@@ -29,11 +21,20 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="phone"
-        android:hint="phone"/>
+        android:hint="Телефон"/>
+
+    <EditText
+        android:id="@+id/editTextTextPasswordReg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:hint="Password"/>
 
     <Button
         android:id="@+id/submitReg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Registration" />
+        android:text="Зарегистрироваться" />
+
 </LinearLayout>
